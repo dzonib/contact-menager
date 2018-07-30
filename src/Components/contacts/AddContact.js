@@ -26,6 +26,8 @@ export default class AddContact extends Component {
     })
 
     this.setState({name: '', email: '', phone: ''})
+
+    this.props.history.push('/')
   }
 
   onChangeHandler = e => {
