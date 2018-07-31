@@ -16,14 +16,10 @@ export default class EditContact extends Component {
     const {id} = this.props.match.params;
     const res = await axios.get(`https://jsonplaceholder.typicode.com/users/${id}`)
 
-    this.setState(() => ({
-      name: res.data.name,
-      email: res.data.email,
-      phone: res.data.phone
-    }))
+    this.setState(() => ({name: res.data.name, email: res.data.email, phone: res.data.phone}))
   }
 
-  onSubmit = async (dispatch, e) => {
+  onSubmit = async(dispatch, e) => {
     e.preventDefault();
 
     const {name, email, phone} = this.state;
@@ -31,23 +27,48 @@ export default class EditContact extends Component {
     // check for errors
 
     if (name === "") {
-      this.setState({errors: {name: "Name is required"}})
+      this.setState({
+        errors: {
+          name: "Name is required"
+        }
+      })
       return;
     }
     if (email === "") {
-      this.setState({errors: {email: "Email is required"}})
+      this.setState({
+        errors: {
+          email: "Email is required"
+        }
+      })
       return;
     }
     if (phone === "") {
-      this.setState({errors: {phone: "Phone is required"}})
+      this.setState({
+        errors: {
+          phone: "Phone is required"
+        }
+      })
       return;
     }
 
-    await axios.put(`https://jsonplaceholder.typicode.com/users/${this.props.match.params.id}`)
+    const updContact = {
+      name,
+      email,
+      phone
+    }
+
+    const {id} = this.props.match.params
+
+    const res = await axios.put(`https://jsonplaceholder.typicode.com/users/${id}`, updContact)
+
+    dispatch({type: "UPDATE_CONTACT", payload: res.data})
 
     this.setState({name: '', email: '', phone: '', errors: ''})
 
-    this.props.history.push('/')
+    this
+      .props
+      .history
+      .push('/')
   }
 
   onChangeHandler = e => {
@@ -77,8 +98,7 @@ export default class EditContact extends Component {
                     onChange={this.onChangeHandler}
                     name="name"
                     placeholder="Enter Name..."
-                    error={errors.name}
-                    />
+                    error={errors.name}/>
                   <TextInputGroup
                     type="email"
                     value={email}
@@ -86,9 +106,7 @@ export default class EditContact extends Component {
                     onChange={this.onChangeHandler}
                     name="email"
                     placeholder="Enter Email..."
-                    error={errors.email}
-                      
-                    />
+                    error={errors.email}/>
                   <TextInputGroup
                     type="phone"
                     value={phone}
@@ -96,10 +114,12 @@ export default class EditContact extends Component {
                     onChange={this.onChangeHandler}
                     name="phone"
                     placeholder="Enter Phone..."
-                    error={errors.phone}
-                    />
+                    error={errors.phone}/>
 
-                  <input type="submit" value="Update Contact" className="btn btn-light btn-block"/>
+                  <input
+                    type="submit"
+                    value="Update Contact"
+                    className="btn btn-light btn-block"/>
                 </form>
               </div>
             </div>
